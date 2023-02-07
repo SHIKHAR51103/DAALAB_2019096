@@ -1,0 +1,36 @@
+# include <stdio.h>
+int main()
+{
+    int n,c=0,y;
+    printf("ENTER SIZE OF ARRAY : ");
+    scanf("%d",n);
+    int a[n];
+    for( int i=0 ; i<n ; i++)
+    {
+        scanf("%d",&a[i]);
+        }
+    int key;
+    printf(" ENTER THE KEY : ");
+    scanf("%d",&key);
+    for( int i=0; i<n;i++)
+    {
+        if (a[i]==key)
+        {
+            c++;
+            y=i;
+        }
+    }
+    if (c>=1)
+    {
+        printf(" KEY IS PRESENT IN THE ARRAY ");
+        printf("POSITION OF THE KEY  %d ", y);
+    }
+    else
+    {
+        printf(" INVALID SEARCH ");
+        
+        
+    }
+    
+    
+}
