@@ -1,0 +1,104 @@
+1 LINEAR SEARCH
+#include <stdio.h>
+
+int linear_search(int array[], int size, int key) {
+    int i;
+    int comparisons = 0;
+    for (i = 0; i < size; i++) {
+        comparisons++;
+        if (array[i] == key) {
+            return comparisons;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int array[] = {3, 4, 1, 7, 9, 2};
+    int size = sizeof(array) / sizeof(array[0]);
+    int key = 7;
+    int comparisons = linear_search(array, size, key);
+    if (comparisons != -1) {
+        printf("ELEMENT FOUND IN THE ARRAY \n");
+        printf("NO. OF COMPARISONS :  %d\n", comparisons);
+    } else {
+        printf("ELEMENT NOT FOUND IN ARRAY \n");
+    }
+    return 0;
+}
+
+
+2 BINARY SEARCH
+
+include <stdio.h>
+
+int binary_search(int array[], int low, int high, int key) {
+    int mid, comparisons = 0;
+    while (low <= high) {
+        mid = (low + high) / 2;
+        comparisons++;
+        if (array[mid] == key) {
+            return comparisons;
+        }
+        if (array[mid] < key) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size = sizeof(array) / sizeof(array[0]);
+    int key = 7;
+    int comparisons = binary_search(array, 0, size - 1, key);
+    if (comparisons != -1) {
+        printf("Element found in the array.\n");
+        printf("Number of comparisons: %d\n", comparisons);
+    } else {
+        printf("Element not found in the array.\n");
+    }
+    return 0;
+}  
+
+3 JUMP SEARCH
+
+#include <stdio.h>
+#include <math.h>
+
+int jump_search(int array[], int size, int key) {
+    int step = sqrt(size);
+    int i;
+    int comparisons = 0;
+    for (i = 0; i < size; i += step) {
+        comparisons++;
+        if (array[i] >= key) {
+            break;
+        }
+    }
+    int start = i - step;
+    int end = i;
+    for (i = start; i <= end && i < size; i++) {
+        comparisons++;
+        if (array[i] == key) {
+            return comparisons;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int size = sizeof(array) / sizeof(array[0]);
+    int key = 7;
+    int comparisons = jump_search(array, size, key);
+    if (comparisons != -1) {
+        printf("Element found in the array.\n");
+        printf("Number of comparisons: %d\n", comparisons);
+    } else {
+        printf("Element not found in the array.\n");
+    }
+    return 0;
+}
