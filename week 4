@@ -1,0 +1,207 @@
+
+1
+
+
+#include <stdio.h>
+
+void insertionSort(int arr[], int n, int *comparisons, int *shifts) {
+    int i, j, key;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+        (*shifts)++;
+        while (j >= 0 && arr[j] > key) {
+            (*comparisons)++;
+            arr[j+1] = arr[j];
+            (*shifts)++;
+            j = j - 1;
+        }
+        arr[j+1] = key;
+        (*shifts)++;
+    }
+}
+
+int main() {
+    int t;
+    printf(" ENTER NO. OF TEST CASES : ");
+    scanf("%d", &t);
+    while (t--) {
+        int n, i;
+        printf(" ENTER THE SIZE : ");
+        scanf("%d", &n);
+        int arr[n];
+        for (i = 0; i < n; i++) {
+            printf(" ENTER ELEMENTS : ");
+            scanf("%d", &arr[i]);
+        }
+        int comparisons = 0, shifts = 0;
+        insertionSort(arr, n, &comparisons, &shifts);
+        printf(" SORTED ARRAY : ");
+        for (i = 0; i < n; i++) {
+            printf("%d ", arr[i]);
+        }
+        printf("\n NO. OF COMPARISONS : %d", comparisons);
+        printf("\n NO. OF SHIFTS : %d",  shifts);
+    }
+    return 0;
+}
+
+
+2
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int partition(int arr[], int low, int high, int *comp, int *swaps) {
+    int pivot = arr[high]; 
+    int i = low - 1; 
+
+    for (int j = low; j <= high - 1; j++) {
+        
+        if (arr[j] <= pivot) {
+            i++; 
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            (*swaps)++;
+        }
+        (*comp)++;
+    }
+   
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    (*swaps)++;
+    return i + 1; 
+}
+
+void quicksort(int arr[], int low, int high, int *comp, int *swaps) {
+    if (low < high) {
+       
+        srand(time(NULL));
+        int rand_index = low + rand() % (high - low + 1);
+       
+        int temp = arr[rand_index];
+        arr[rand_index] = arr[high];
+        arr[high] = temp;
+        (*swaps)++;
+        
+        int pi = partition(arr, low, high, comp, swaps);
+       
+        quicksort(arr, low, pi - 1, comp, swaps);
+        quicksort(arr, pi + 1, high, comp, swaps);
+    }
+}
+
+int main() {
+    int t;
+    printf(" ENTER THE NO. OF TEST CASES : ");
+    scanf("%d", &t);
+    while (t--) {
+        int n, comp = 0, swaps = 0;
+        printf(" ENTER THE SIZE OF ARRAY : ");
+        scanf("%d", &n);
+        int arr[n];
+        for (int i = 0; i < n; i++) {
+            printf(" ENTER ELEMENTS : ");
+            scanf("%d", &arr[i]);
+        }
+        quicksort(arr, 0, n - 1, &comp, &swaps);
+        printf(" COMPARISONS = %d\n", comp);
+        printf(" SWAPS = %d\n", swaps);
+        printf(" SORTED ARRAY : ");
+        for (int i = 0; i < n; i++) {
+            printf("%d ", arr[i]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+
+
+
+3
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+int partition(int arr[], int l, int r) {
+    int pivot = arr[r];
+    int i = l - 1;
+    for (int j = l; j < r; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i+1], &arr[r]);
+    return i + 1;
+}
+
+
+int kthSmallest(int arr[], int l, int r, int k) {
+    if (k > 0 && k <= r - l + 1) {
+        int pos = partition(arr, l, r);
+        if (pos - l == k - 1)
+            return arr[pos];
+        if (pos - l > k - 1)
+            return kthSmallest(arr, l, pos - 1, k);
+        return kthSmallest(arr, pos + 1, r, k - pos + l - 1);
+    }
+    return -1;
+}
+
+int main() {
+    int t;
+    printf(" ENTER THE NO. OF TEST CASES : ");
+    scanf("%d", &t);
+    while (t--) {
+        int n, k;
+        printf(" ENTER THE SIZE OF ARRAY : ");
+        scanf("%d", &n);
+        int arr[n];
+        for (int i = 0; i < n; i++){
+            printf(" ENTER ELEMENTS :");
+            scanf("%d", &arr[i]);
+        printf(" K : ");
+        scanf("%d", &k);}
+        int kth = kthSmallest(arr, 0, n-1, k);
+        printf("%d\n", kth);
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
