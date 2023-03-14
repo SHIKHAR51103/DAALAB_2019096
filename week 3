@@ -147,10 +147,10 @@ int main() {
         }
 
         if(hasDuplicate(arr, n)) {
-            printf(" IT HAS DUPLICATE \n");
+            printf(" YES \n");
         }
         else {
-            printf(" IT DOES NOT HAVE DUPLICATE \n");
+            printf("  NO \n");
         }
     }
 
