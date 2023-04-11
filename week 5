@@ -1,0 +1,201 @@
+
+1
+
+
+#include <stdio.h>
+
+void findMaxOccurrence(char arr[], int n) {
+   
+    char max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+  
+    int count[max+1];
+    for (int i = 0; i <= max; i++) {
+        count[i] = 0;
+    }
+
+ 
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+   
+    char maxOccurrenceElement;
+    int maxOccurrenceCount = 0;
+    for (int i = 0; i <= max; i++) {
+        if (count[i] > maxOccurrenceCount) {
+            maxOccurrenceElement = i;
+            maxOccurrenceCount = count[i];
+        }
+    }
+
+    if (maxOccurrenceCount == 1) {
+        printf("No Duplicates Present\n");
+    } else {
+        printf("%c %d\n", maxOccurrenceElement, maxOccurrenceCount);
+    }
+}
+
+int main() {
+    int t;
+    printf(" ENTER NO. OF TEST CASES : ");
+    scanf("%d", &t);
+    while (t--) {
+        int n;
+        printf(" ENTER  SIZE : ");
+        scanf("%d", &n);
+        char arr[n];
+        for (int i = 0; i < n; i++) {
+            printf("ENTER ELEMENTS : ");
+            scanf(" %c", &arr[i]);
+        }
+        findMaxOccurrence(arr, n);
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+2
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+
+void findSumElements(int arr[], int n, int key) {
+    
+    qsort(arr, n, sizeof(int), compare);
+
+   
+    int i = 0, j = n - 1;
+
+  
+    while (i < j) {
+        if (arr[i] + arr[j] == key) {
+            printf("%d %d\n", arr[i], arr[j]);
+            return;
+        } else if (arr[i] + arr[j] < key) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+
+  
+    printf("No Such Elements Exist\n");
+}
+
+
+
+int main() {
+    int t, n, key;
+
+    
+    printf(" ENTER NO. OF TEST CASES : ");
+    scanf("%d", &t);
+
+    while (t--) {
+      
+        printf(" ENTER SIZE  : ");
+        scanf("%d", &n);
+        int arr[n];
+        for (int i = 0; i < n; i++) {
+            printf(" ENTER ELEMENTS :");
+            scanf("%d", &arr[i]);
+        }
+        scanf("%d", &key);
+
+      
+        findSumElements(arr, n, key);
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+3
+
+
+
+#include <stdio.h>
+
+void findCommonElements(int arr1[], int m, int arr2[], int n) {
+ 
+    int i = 0, j = 0;
+
+  
+    while (i < m && j < n) {
+        if (arr1[i] == arr2[j]) {
+            printf("%d ", arr1[i]);
+            i++;
+            j++;
+        } else if (arr1[i] < arr2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+   
+    if (i == 0 && j == 0) {
+        printf("No Common Elements Exist\n");
+    }
+}
+
+int main() {
+    int m, n;
+
+ 
+    printf(" ENTER THE SIZE OF  FIRST ARRAY : ");
+    scanf("%d", &m);
+
+   
+    int arr1[m];
+    for (int i = 0; i < m; i++) {
+        printf(" ENTER FIRST ARRAY : ");
+        scanf("%d", &arr1[i]);
+    }
+
+   
+    printf(" ENTER THE SIZE OF SECOND ARRAY : ");
+    scanf("%d", &n);
+
+  
+    int arr2[n];
+    for (int i = 0; i < n; i++) {
+        printf(" ENTER SECOND ARRAY : ");
+        scanf("%d", &arr2[i]);
+    }
+
+   
+    findCommonElements(arr1, m, arr2, n);
+
+    return 0;
+}
+
+
