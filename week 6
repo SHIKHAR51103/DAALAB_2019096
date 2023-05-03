@@ -1,0 +1,20 @@
+given a (directed/undirected) graph , design an algorithm and implement it using a program to find if a path exists between two given vertices or not .
+input format : 
+input will be the graph in the form of adjacency matrix or adjacency list .
+source vertex number and destination vertex is also provided as  an input.
+output format : 
+output will be " yes path exists " if path exists , otherwise print " no such path exists " .
+
+
+given a graph , design an algorithm and implement it using a program to find if a graph is bipartite or not .
+input format : 
+input will be the graph in the form of adjacency matrix or adjacency list .
+output format : 
+output will be " yes bipartite " if graph is bipartite , otherwise print " not bipartite " .
+
+
+given a directed graph , design an algorithm and implement it using a program to find whether cycle exists in the graph or not.
+input format :
+input will be the graph in the form of adjacency matrix or adjacency lists .
+output format :
+output will be " yes cycle exists " otherwise print " no cycle exists " .
