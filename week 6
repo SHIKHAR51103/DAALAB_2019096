@@ -1,20 +1,220 @@
-given a (directed/undirected) graph , design an algorithm and implement it using a program to find if a path exists between two given vertices or not .
-input format : 
-input will be the graph in the form of adjacency matrix or adjacency list .
-source vertex number and destination vertex is also provided as  an input.
-output format : 
-output will be " yes path exists " if path exists , otherwise print " no such path exists " .
+1
 
 
-given a graph , design an algorithm and implement it using a program to find if a graph is bipartite or not .
-input format : 
-input will be the graph in the form of adjacency matrix or adjacency list .
-output format : 
-output will be " yes bipartite " if graph is bipartite , otherwise print " not bipartite " .
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Depth-First Search (DFS) function
+bool hasPathDFS(vector<vector<int>>& graph, int source, int destination, vector<bool>& visited) {
+    if (source == destination) {
+        return true;
+    }
+    visited[source] = true;
+    for (int i = 0; i < graph.size(); i++) {
+        if (!visited[i] && graph[source][i] == 1) {
+            if (hasPathDFS(graph, i, destination, visited)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Function to check if a path exists between two given vertices
+bool hasPath(vector<vector<int>>& graph, int source, int destination) {
+    vector<bool> visited(graph.size(), false);
+    return hasPathDFS(graph, source, destination, visited);
+}
+
+int main() {
+    // Read the number of vertices from input
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    // Read the adjacency matrix from input
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    // Read the source and destination vertices from input
+    int source, destination;
+    cout << "Enter the source vertex: ";
+    cin >> source;
+    cout << "Enter the destination vertex: ";
+    cin >> destination;
+
+    // Check if a path exists between the source and destination vertices
+    if (hasPath(graph, source, destination)) {
+        cout << "Yes, Path Exists" << endl;
+    } else {
+        cout << "No Such Path Exists" << endl;
+    }
+
+    return 0;
+}
 
 
-given a directed graph , design an algorithm and implement it using a program to find whether cycle exists in the graph or not.
-input format :
-input will be the graph in the form of adjacency matrix or adjacency lists .
-output format :
-output will be " yes cycle exists " otherwise print " no cycle exists " .
+
+
+
+2
+
+
+
+
+
+#include <iostream>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+// Function to check if the graph is bipartite
+bool isBipartite(vector<vector<int>>& graph, int source) {
+    int numVertices = graph.size();
+
+    // Create a color array to assign colors to vertices
+    // 0 represents no color, 1 represents color 1, -1 represents color 2
+    vector<int> colors(numVertices, 0);
+
+    // Assign the color 1 to the source vertex
+    colors[source] = 1;
+
+    // Create a queue for BFS traversal
+    queue<int> q;
+    q.push(source);
+
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+
+        // Check all adjacent vertices
+        for (int i = 0; i < numVertices; i++) {
+            // If there is an edge between the current vertex and the adjacent vertex
+            if (graph[current][i] == 1) {
+                // If the adjacent vertex is not colored
+                if (colors[i] == 0) {
+                    // Assign the opposite color to the adjacent vertex
+                    colors[i] = -colors[current];
+                    q.push(i);
+                }
+                // If the adjacent vertex has the same color as the current vertex
+                else if (colors[i] == colors[current]) {
+                    return false; // Not bipartite
+                }
+            }
+        }
+    }
+
+    return true; // Bipartite
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    // Check if the graph is bipartite
+    if (isBipartite(graph, 0)) {
+        cout << "Yes, Bipartite" << endl;
+    } else {
+        cout << "Not Bipartite" << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+3
+
+
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Depth-First Search (DFS) function
+bool hasCycleDFS(vector<vector<int>>& graph, int vertex, vector<bool>& visited, vector<bool>& recursionStack) {
+    visited[vertex] = true;
+    recursionStack[vertex] = true;
+
+    for (int i = 0; i < graph.size(); i++) {
+        if (graph[vertex][i] == 1) {
+            if (!visited[i]) {
+                if (hasCycleDFS(graph, i, visited, recursionStack)) {
+                    return true;
+                }
+            } else if (recursionStack[i]) {
+                return true;
+            }
+        }
+    }
+
+    recursionStack[vertex] = false;
+    return false;
+}
+
+// Function to check if a cycle exists in the directed graph
+bool hasCycle(vector<vector<int>>& graph) {
+    int numVertices = graph.size();
+    vector<bool> visited(numVertices, false);
+    vector<bool> recursionStack(numVertices, false);
+
+    for (int i = 0; i < numVertices; i++) {
+        if (!visited[i]) {
+            if (hasCycleDFS(graph, i, visited, recursionStack)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    // Check if a cycle exists in the graph
+    if (hasCycle(graph)) {
+        cout << "Yes, Cycle Exists" << endl;
+    } else {
+        cout << "No Cycle Exists" << endl;
+    }
+
+    return 0;
+}
