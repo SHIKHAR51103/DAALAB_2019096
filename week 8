@@ -1,0 +1,302 @@
+1
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+
+using namespace std;
+
+const int INF = INT_MAX;
+
+// Function to find the minimum cost required to connect cities using Prim's algorithm
+int minimumCostToConnectCities(vector<vector<int>>& graph) {
+    int numVertices = graph.size();
+
+    vector<bool> visited(numVertices, false);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+    int minimumCost = 0;
+
+    // Choose an arbitrary starting vertex (here, vertex 0)
+    int startVertex = 0;
+    visited[startVertex] = true;
+
+    // Add all the adjacent edges of the starting vertex to the priority queue
+    for (int v = 1; v < numVertices; v++) {
+        if (graph[startVertex][v] != 0) {
+            pq.push({graph[startVertex][v], v});
+        }
+    }
+
+    // Continue until all vertices are visited or the priority queue is empty
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        int weight = pq.top().first;
+        pq.pop();
+
+        // Skip the edge if the destination vertex is already visited
+        if (visited[u]) {
+            continue;
+        }
+
+        visited[u] = true;
+        minimumCost += weight;
+
+        // Add all the adjacent edges of the visited vertex to the priority queue
+        for (int v = 0; v < numVertices; v++) {
+            if (!visited[v] && graph[u][v] != 0) {
+                pq.push({graph[u][v], v});
+            }
+        }
+    }
+
+    // Check if all vertices are visited
+    for (int v = 0; v < numVertices; v++) {
+        if (!visited[v]) {
+            cout << "It is not possible to connect all cities" << endl;
+            return -1;
+        }
+    }
+
+    // Return the minimum cost required to connect the cities
+    return minimumCost;
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of cities: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int minimumCost = minimumCostToConnectCities(graph);
+
+    if (minimumCost != -1) {
+        cout << "Minimum cost required to connect the cities: " << minimumCost << endl;
+    }
+
+    return 0;
+}
+
+
+
+2
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Edge {
+    int src, dest, weight;
+};
+
+// Compare function for sorting the edges in non-decreasing order of their weights
+bool compareEdges(const Edge& e1, const Edge& e2) {
+    return e1.weight < e2.weight;
+}
+
+// Find function for disjoint set data structure
+int find(vector<int>& parent, int i) {
+    if (parent[i] == i)
+        return i;
+    return find(parent, parent[i]);
+}
+
+// Union function for disjoint set data structure
+void unionSets(vector<int>& parent, vector<int>& rank, int i, int j) {
+    int iRoot = find(parent, i);
+    int jRoot = find(parent, j);
+    if (rank[iRoot] < rank[jRoot])
+        parent[iRoot] = jRoot;
+    else if (rank[iRoot] > rank[jRoot])
+        parent[jRoot] = iRoot;
+    else {
+        parent[jRoot] = iRoot;
+        rank[iRoot]++;
+    }
+}
+
+// Function to find the minimum spanning weight using Kruskal's algorithm
+int findMinimumSpanningWeight(vector<Edge>& edges, int numVertices) {
+    sort(edges.begin(), edges.end(), compareEdges);
+
+    vector<int> parent(numVertices);
+    vector<int> rank(numVertices, 0);
+    for (int i = 0; i < numVertices; i++) {
+        parent[i] = i;
+    }
+
+    int minimumSpanningWeight = 0;
+    int edgeCount = 0;
+
+    for (const Edge& edge : edges) {
+        int srcRoot = find(parent, edge.src);
+        int destRoot = find(parent, edge.dest);
+
+        if (srcRoot != destRoot) {
+            minimumSpanningWeight += edge.weight;
+            unionSets(parent, rank, srcRoot, destRoot);
+            edgeCount++;
+
+            if (edgeCount == numVertices - 1) {
+                break;
+            }
+        }
+    }
+
+    return minimumSpanningWeight;
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    vector<Edge> edges;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = i + 1; j < numVertices; j++) {
+            if (graph[i][j] != 0) {
+                Edge edge;
+                edge.src = i;
+                edge.dest = j;
+                edge.weight = graph[i][j];
+                edges.push_back(edge);
+            }
+        }
+    }
+
+    int minimumSpanningWeight = findMinimumSpanningWeight(edges, numVertices);
+
+    cout << "Minimum spanning weight: " << minimumSpanningWeight << endl;
+
+    return 0;
+}
+
+
+
+
+
+
+3
+
+
+
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Edge {
+    int source;
+    int destination;
+    int weight;
+};
+
+bool compareEdges(const Edge& a, const Edge& b) {
+    return a.weight > b.weight; // Sort in non-increasing order
+}
+
+int find(int vertex, vector<int>& parent) {
+    if (parent[vertex] != vertex)
+        parent[vertex] = find(parent[vertex], parent);
+    return parent[vertex];
+}
+
+void unionSets(int x, int y, vector<int>& parent, vector<int>& rank) {
+    int rootX = find(x, parent);
+    int rootY = find(y, parent);
+
+    if (rank[rootX] < rank[rootY])
+        parent[rootX] = rootY;
+    else if (rank[rootX] > rank[rootY])
+        parent[rootY] = rootX;
+    else {
+        parent[rootX] = rootY;
+        rank[rootY]++;
+    }
+}
+
+int findMaximumBudget(int numVertices, vector<Edge>& edges) {
+    sort(edges.begin(), edges.end(), compareEdges);
+
+    vector<int> parent(numVertices);
+    vector<int> rank(numVertices, 0);
+    for (int i = 0; i < numVertices; i++)
+        parent[i] = i;
+
+    int maximumSpanningWeight = 0;
+    int edgeCount = 0;
+
+    for (const auto& edge : edges) {
+        int rootSource = find(edge.source, parent);
+        int rootDestination = find(edge.destination, parent);
+
+        if (rootSource != rootDestination) {
+            maximumSpanningWeight += edge.weight;
+            unionSets(rootSource, rootDestination, parent, rank);
+            edgeCount++;
+
+            if (edgeCount == numVertices - 1)
+                break;
+        }
+    }
+
+    if (edgeCount != numVertices - 1) {
+        cout << "Error: It is not possible to form a maximum spanning tree.\n";
+        return -1;
+    }
+
+    return maximumSpanningWeight;
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    vector<Edge> edges;
+    cout << "Enter the graph (adjacency matrix or adjacency list):\n";
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            int weight;
+            cin >> weight;
+            if (weight != 0 && i < j) {
+                edges.push_back({i, j, weight});
+            }
+        }
+    }
+
+    int maximumSpanningWeight = findMaximumBudget(numVertices, edges);
+    if (maximumSpanningWeight != -1)
+        cout << "Maximum budget required: " << maximumSpanningWeight << endl;
+
+    return 0;
+}
