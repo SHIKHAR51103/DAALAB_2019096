@@ -1,1 +1,266 @@
+1
+
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+
+using namespace std;
+
+// Function to print the path from source to destination
+void printPath(vector<int>& parent, int v) {
+    if (parent[v] == -1) {
+        cout << v << " ";
+        return;
+    }
+    printPath(parent, parent[v]);
+    cout << v << " ";
+}
+
+// Function to find the shortest path using Dijkstra's algorithm
+void dijkstra(vector<vector<int>>& graph, int source) {
+    int numVertices = graph.size();
+    vector<int> distance(numVertices, INT_MAX);
+    vector<int> parent(numVertices, -1);
+    vector<bool> visited(numVertices, false);
+
+    distance[source] = 0;
+
+    // Create a priority queue to store vertices and their distances
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push(make_pair(0, source));
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        visited[u] = true;
+
+        for (int v = 0; v < numVertices; v++) {
+            if (graph[u][v] != 0 && !visited[v]) {
+                int weight = graph[u][v];
+                if (distance[u] + weight < distance[v]) {
+                    distance[v] = distance[u] + weight;
+                    parent[v] = u;
+                    pq.push(make_pair(distance[v], v));
+                }
+            }
+        }
+    }
+
+    // Print the shortest path and distance from each friend's location to Akshay's house
+    for (int i = 0; i < numVertices; i++) {
+        if (i != source) {
+            cout << "Shortest path from Friend " << i << " to Akshay's house: ";
+            printPath(parent, i);
+            cout << "with distance: " << distance[i] << endl;
+        }
+    }
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int source;
+    cout << "Enter Akshay's house vertex number: ";
+    cin >> source;
+
+    dijkstra(graph, source);
+
+    return 0;
+}
+
+
+
+
+
+
+2
+
+
+
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+// Function to print the path from source to destination
+void printPath(vector<int>& parent, int v) {
+    if (parent[v] == -1) {
+        cout << v << " ";
+        return;
+    }
+    printPath(parent, parent[v]);
+    cout << v << " ";
+}
+
+// Function to find the shortest path using Bellman-Ford algorithm
+void bellmanFord(vector<vector<int>>& graph, int source) {
+    int numVertices = graph.size();
+    vector<int> distance(numVertices, INT_MAX);
+    vector<int> parent(numVertices, -1);
+
+    distance[source] = 0;
+
+    // Relax edges V-1 times
+    for (int i = 0; i < numVertices - 1; i++) {
+        for (int u = 0; u < numVertices; u++) {
+            for (int v = 0; v < numVertices; v++) {
+                if (graph[u][v] != 0 && distance[u] + graph[u][v] < distance[v]) {
+                    distance[v] = distance[u] + graph[u][v];
+                    parent[v] = u;
+                }
+            }
+        }
+    }
+
+    // Check for negative-weight cycles
+    for (int u = 0; u < numVertices; u++) {
+        for (int v = 0; v < numVertices; v++) {
+            if (graph[u][v] != 0 && distance[u] + graph[u][v] < distance[v]) {
+                cout << "Negative-weight cycle detected!" << endl;
+                return;
+            }
+        }
+    }
+
+    // Print the shortest path and distance from each friend's location to Akshay's house
+    for (int i = 0; i < numVertices; i++) {
+        if (i != source) {
+            cout << "Shortest path from Friend " << i << " to Akshay's house: ";
+            printPath(parent, i);
+            cout << "with distance: " << distance[i] << endl;
+        }
+    }
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int source;
+    cout << "Enter Akshay's house vertex number: ";
+    cin >> source;
+
+    bellmanFord(graph, source);
+
+    return 0;
+}
+
+
+
+3
+
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+const int INF = INT_MAX;
+
+// Function to find the weight of the shortest path with exactly k edges
+int shortestPathWithKEdges(vector<vector<int>>& graph, int source, int destination, int k) {
+    int numVertices = graph.size();
+    vector<vector<vector<int>>> dp(numVertices, vector<vector<int>>(numVertices, vector<int>(k + 1, INF)));
+
+    // Initialize dp with base cases
+    for (int v = 0; v < numVertices; v++) {
+        dp[v][v][0] = 0;  // Distance from v to v with 0 edges is 0
+    }
+
+    // Set the weights of direct edges
+    for (int u = 0; u < numVertices; u++) {
+        for (int v = 0; v < numVertices; v++) {
+            if (graph[u][v] != 0) {
+                dp[u][v][1] = graph[u][v];
+            }
+        }
+    }
+
+    // Calculate shortest path weights for each edge count
+    for (int i = 2; i <= k; i++) {
+        for (int u = 0; u < numVertices; u++) {
+            for (int v = 0; v < numVertices; v++) {
+                for (int w = 0; w < numVertices; w++) {
+                    dp[u][v][i] = min(dp[u][v][i], dp[u][w][i - 1] + dp[w][v][1]);
+                }
+            }
+        }
+    }
+
+    // Check if a path of length k exists from source to destination
+    if (dp[source][destination][k] == INF) {
+        cout << "No path of length " << k << " is available" << endl;
+        return -1;
+    }
+
+    // Return the weight of the shortest path with exactly k edges
+    return dp[source][destination][k];
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    // Create an adjacency matrix to represent the graph
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+
+    cout << "Enter the adjacency matrix: " << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int source, destination, k;
+    cout << "Enter the source vertex number: ";
+    cin >> source;
+    cout << "Enter the destination vertex number: ";
+    cin >> destination;
+    cout << "Enter the value of k: ";
+    cin >> k;
+
+    int shortestPathWeight = shortestPathWithKEdges(graph, source, destination, k);
+
+    if (shortestPathWeight != -1) {
+        cout << "Weight of the shortest path from source to destination with exactly " << k << " edges: " << shortestPathWeight << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
 
