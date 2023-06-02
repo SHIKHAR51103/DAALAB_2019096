@@ -1,0 +1,144 @@
+
+
+
+1
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int getNthUglyNumber(int n) {
+    vector<int> ugly(n);
+    ugly[0] = 1;
+    
+    int i2 = 0, i3 = 0, i5 = 0;
+    int nextMultipleOf2 = 2, nextMultipleOf3 = 3, nextMultipleOf5 = 5;
+    
+    for (int i = 1; i < n; i++) {
+        int nextUglyNumber = min(nextMultipleOf2, min(nextMultipleOf3, nextMultipleOf5));
+        ugly[i] = nextUglyNumber;
+        
+        if (nextUglyNumber == nextMultipleOf2) {
+            i2++;
+            nextMultipleOf2 = ugly[i2] * 2;
+        }
+        if (nextUglyNumber == nextMultipleOf3) {
+            i3++;
+            nextMultipleOf3 = ugly[i3] * 3;
+        }
+        if (nextUglyNumber == nextMultipleOf5) {
+            i5++;
+            nextMultipleOf5 = ugly[i5] * 5;
+        }
+    }
+    
+    return ugly[n - 1];
+}
+
+int main() {
+    int T;
+    cout << "Enter the number of test cases: ";
+    cin >> T;
+    
+    for (int i = 0; i < T; i++) {
+        int n;
+        cout << "Enter the value of n for test case " << i + 1 << ": ";
+        cin >> n;
+        
+        int nthUglyNumber = getNthUglyNumber(n);
+        cout << "The " << n << "th ugly number is: " << nthUglyNumber << endl;
+    }
+    
+    return 0;
+}
+
+
+
+
+2
+
+
+
+
+#include <iostream>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+void DFS(vector<vector<int>>& graph, int v, vector<bool>& visited) {
+    stack<int> stk;
+    stk.push(v);
+    visited[v] = true;
+
+    while (!stk.empty()) {
+        int curr = stk.top();
+        stk.pop();
+
+        for (int neighbor : graph[curr]) {
+            if (!visited[neighbor]) {
+                stk.push(neighbor);
+                visited[neighbor] = true;
+            }
+        }
+    }
+}
+
+int findMotherVertex(vector<vector<int>>& graph) {
+    int n = graph.size();
+    vector<bool> visited(n, false);
+    int mother = -1;
+
+    // Perform DFS starting from each vertex
+    for (int v = 0; v < n; v++) {
+        if (!visited[v]) {
+            DFS(graph, v, visited);
+            mother = v; // Potential mother vertex
+        }
+    }
+
+    // Check if the potential mother vertex has a path to all other vertices
+    for (int v = 0; v < n; v++) {
+        visited.assign(n, false);
+        DFS(graph, mother, visited);
+        if (!visited[v]) {
+            return -1; // No mother vertex found
+        }
+    }
+
+    return mother;
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of vertices in the graph: ";
+    cin >> n;
+
+    vector<vector<int>> graph(n);
+
+    cout << "Enter the adjacency list for each vertex:" << endl;
+    for (int v = 0; v < n; v++) {
+        int neighbors;
+        cout << "Enter the number of neighbors for vertex " << v << ": ";
+        cin >> neighbors;
+
+        cout << "Enter the neighbors of vertex " << v << ": ";
+        for (int i = 0; i < neighbors; i++) {
+            int neighbor;
+            cin >> neighbor;
+            graph[v].push_back(neighbor);
+        }
+    }
+
+    int mother = findMotherVertex(graph);
+
+    if (mother != -1) {
+        cout << "The mother vertex in the graph is: " << mother << endl;
+    } else {
+        cout << "No mother vertex found in the graph." << endl;
+    }
+
+    return 0;
+}
