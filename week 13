@@ -1,1 +1,160 @@
 
+
+1
+
+
+
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter the size of the character array: ";
+    cin >> n;
+    
+    vector<char> arr(n);
+    cout << "Enter the elements of the character array: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    
+    unordered_map<char, int> frequency;
+    for (char c : arr) {
+        frequency[c]++;
+    }
+    
+    vector<char> distinctChars;
+    for (auto pair : frequency) {
+        distinctChars.push_back(pair.first);
+    }
+    
+    sort(distinctChars.begin(), distinctChars.end());
+    
+    cout << "Distinct characters in alphabetical order:" << endl;
+    for (char c : distinctChars) {
+        cout << c << " (" << frequency[c] << ")" << endl;
+    }
+    
+    return 0;
+}
+
+
+
+
+
+
+2
+
+
+
+
+#include <iostream>
+#include <unordered_set>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int T;
+    cout << "Enter the number of test cases: ";
+    cin >> T;
+    
+    for (int t = 0; t < T; t++) {
+        int n;
+        cout << "Enter the size of the array: ";
+        cin >> n;
+        
+        vector<int> arr(n);
+        cout << "Enter the elements of the array: ";
+        for (int i = 0; i < n; i++) {
+            cin >> arr[i];
+        }
+        
+        int k;
+        cout << "Enter the window size k: ";
+        cin >> k;
+        
+        unordered_set<int> window;
+        bool duplicateFound = false;
+        
+        for (int i = 0; i < n - k + 1; i++) {
+            int element = arr[i];
+            
+            if (window.find(element) != window.end()) {
+                duplicateFound = true;
+                break;
+            }
+            
+            window.insert(element);
+            
+            if (window.size() > k) {
+                window.erase(arr[i - k + 1]);
+            }
+        }
+        
+        if (duplicateFound) {
+            cout << "Duplicate present in window k" << endl;
+        } else {
+            cout << "Duplicate not present in window k" << endl;
+        }
+    }
+    
+    return 0;
+}
+
+
+
+
+
+
+
+3
+
+
+
+
+#include <iostream>
+#include <unordered_set>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+    
+    vector<int> arr(n);
+    cout << "Enter the elements of the array: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int a = arr[i];
+            int b = arr[j];
+            
+            for (int k = 0; k < n - 1; k++) {
+                for (int l = k + 1; l < n; l++) {
+                    int c = arr[k];
+                    int d = arr[l];
+                    
+                    if (a * b == c * d && a != b && a != c && a != d && b != c && b != d) {
+                        cout << "Pair (a, b): (" << a << ", " << b << ")" << endl;
+                        cout << "Pair (c, d): (" << c << ", " << d << ")" << endl;
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+    
+    cout << "No such pairs exist" << endl;
+    
+    return 0;
+}
