@@ -1,1 +1,227 @@
+1
+
+
+
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+const int INF = INT_MAX;
+
+void floydWarshall(int numVertices, vector<vector<int>>& graph) {
+    vector<vector<int>> dist = graph;
+
+    // Initialize diagonal elements as 0
+    for (int i = 0; i < numVertices; i++)
+        dist[i][i] = 0;
+
+    // Compute all pair shortest paths
+    for (int k = 0; k < numVertices; k++) {
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                if (dist[i][k] != INF && dist[k][j] != INF && dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+
+    // Print the shortest distance matrix
+    cout << "Shortest Distance Matrix:\n";
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            if (dist[i][j] == INF)
+                cout << "INF\t";
+            else
+                cout << dist[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int numVertices;
+    cout << "Enter the number of vertices: ";
+    cin >> numVertices;
+
+    vector<vector<int>> graph(numVertices, vector<int>(numVertices));
+
+    cout << "Enter the graph (adjacency matrix or adjacency list):\n";
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            cin >> graph[i][j];
+            if (graph[i][j] == -1)
+                graph[i][j] = INF;
+        }
+    }
+
+    floydWarshall(numVertices, graph);
+
+    return 0;
+}
+
+
+
+
+
+
+
+2
+
+
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Item {
+    int weight;
+    int value;
+    double ratio;
+};
+
+bool compareItems(const Item& a, const Item& b) {
+    return a.ratio > b.ratio; // Sort in non-increasing order of ratio
+}
+
+void fractionalKnapsack(int numItems, vector<int>& weights, vector<int>& values, int maxCapacity) {
+    vector<Item> items(numItems);
+
+    // Calculate ratio for each item
+    for (int i = 0; i < numItems; i++) {
+        items[i].weight = weights[i];
+        items[i].value = values[i];
+        items[i].ratio = static_cast<double>(values[i]) / weights[i];
+    }
+
+    // Sort the items based on ratio
+    sort(items.begin(), items.end(), compareItems);
+
+    int remainingCapacity = maxCapacity;
+    double knapsackValue = 0.0;
+    vector<double> fractions(numItems, 0.0);
+
+    for (int i = 0; i < numItems; i++) {
+        if (items[i].weight <= remainingCapacity) {
+            fractions[i] = 1.0;
+            remainingCapacity -= items[i].weight;
+            knapsackValue += items[i].value;
+        } else {
+            fractions[i] = static_cast<double>(remainingCapacity) / items[i].weight;
+            knapsackValue += fractions[i] * items[i].value;
+            break;
+        }
+    }
+
+    // Print the maximum value
+    cout << "Maximum value: " << knapsackValue << endl;
+
+    // Print the list of selected items along with their fractions
+    cout << "Selected items:\n";
+    for (int i = 0; i < numItems; i++) {
+        if (fractions[i] > 0.0) {
+            cout << "Item " << (i + 1) << ": " << fractions[i] << " fraction\n";
+        }
+    }
+}
+
+int main() {
+    int numItems;
+    cout << "Enter the number of items: ";
+    cin >> numItems;
+
+    vector<int> weights(numItems);
+    vector<int> values(numItems);
+
+    cout << "Enter the weights of items: ";
+    for (int i = 0; i < numItems; i++) {
+        cin >> weights[i];
+    }
+
+    cout << "Enter the values of items: ";
+    for (int i = 0; i < numItems; i++) {
+        cin >> values[i];
+    }
+
+    int maxCapacity;
+    cout << "Enter the maximum capacity of the knapsack: ";
+    cin >> maxCapacity;
+
+    fractionalKnapsack(numItems, weights, values, maxCapacity);
+
+    return 0;
+}
+
+
+
+
+
+
+
+3
+
+
+
+
+
+
+
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int minimumComputationCost(int n, int arr[]) {
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    // Insert all file sizes into the priority queue
+    for (int i = 0; i < n; i++) {
+        pq.push(arr[i]);
+    }
+
+    int cost = 0;
+
+    // Merge files until only one file remains
+    while (pq.size() > 1) {
+        // Remove the two files with the smallest sizes
+        int file1 = pq.top();
+        pq.pop();
+        int file2 = pq.top();
+        pq.pop();
+
+        // Compute the merged size and add it to the cost
+        int mergedSize = file1 + file2;
+        cost += mergedSize;
+
+        // Insert the merged size back into the priority queue
+        pq.push(mergedSize);
+    }
+
+    return cost;
+}
+
+int main() {
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter the file sizes: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    int cost = minimumComputationCost(n, arr);
+
+    cout << "Minimum computation cost: " << cost << endl;
+
+    return 0;
+}
+
 
