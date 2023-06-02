@@ -1,0 +1,206 @@
+1
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Activity {
+    int start;
+    int finish;
+};
+
+bool compareActivities(const Activity& a1, const Activity& a2) {
+    return a1.finish < a2.finish;
+}
+
+void selectNonConflictingActivities(int n, vector<int>& start, vector<int>& finish) {
+    vector<Activity> activities(n);
+
+    // Create a vector of Activity objects
+    for (int i = 0; i < n; i++) {
+        activities[i].start = start[i];
+        activities[i].finish = finish[i];
+    }
+
+    // Sort the activities based on finishing times
+    sort(activities.begin(), activities.end(), compareActivities);
+
+    vector<int> selected;
+    selected.push_back(0);  // Select the first activity
+    int lastFinish = activities[0].finish;
+    int selectedCount = 1;
+
+    // Iterate over the sorted activities and select non-conflicting activities
+    for (int i = 1; i < n; i++) {
+        if (activities[i].start >= lastFinish) {
+            selected.push_back(i);
+            lastFinish = activities[i].finish;
+            selectedCount++;
+        }
+    }
+
+    // Print the selected activities
+    cout << "Number of non-conflicting activities: " << selectedCount << endl;
+    cout << "Selected activities: ";
+    for (int i = 0; i < selectedCount; i++) {
+        cout << selected[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of activities: ";
+    cin >> n;
+
+    vector<int> start(n);
+    vector<int> finish(n);
+
+    cout << "Enter the starting times of activities: ";
+    for (int i = 0; i < n; i++) {
+        cin >> start[i];
+    }
+
+    cout << "Enter the finishing times of activities: ";
+    for (int i = 0; i < n; i++) {
+        cin >> finish[i];
+    }
+
+    selectNonConflictingActivities(n, start, finish);
+
+    return 0;
+}
+
+
+
+
+2
+
+
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void selectTasks(int n, vector<int>& time, vector<int>& deadline) {
+    vector<pair<int, int>> tasks;
+
+    // Create a vector of pairs containing task index and deadline
+    for (int i = 0; i < n; i++) {
+        tasks.push_back(make_pair(i, deadline[i]));
+    }
+
+    // Sort the tasks based on deadlines
+    sort(tasks.begin(), tasks.end(), [](const pair<int, int>& t1, const pair<int, int>& t2) {
+        return t1.second < t2.second;
+    });
+
+    vector<int> selected;
+    int count = 0;
+
+    // Select tasks without crossing deadlines
+    for (int i = 0; i < n; i++) {
+        if (tasks[i].second >= count + 1) {
+            count++;
+            selected.push_back(tasks[i].first);
+        }
+    }
+
+    // Print the number of completed tasks and the list of selected tasks
+    cout << "Number of tasks completed: " << count << endl;
+    cout << "Selected tasks: ";
+    for (int i = 0; i < count; i++) {
+        cout << selected[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    int n;
+    cout << "Enter the total number of tasks: ";
+    cin >> n;
+
+    vector<int> time(n);
+    vector<int> deadline(n);
+
+    cout << "Enter the time taken for each task: ";
+    for (int i = 0; i < n; i++) {
+        cin >> time[i];
+    }
+
+    cout << "Enter the deadlines for each task: ";
+    for (int i = 0; i < n; i++) {
+        cin >> deadline[i];
+    }
+
+    selectTasks(n, time, deadline);
+
+    return 0;
+}
+
+
+
+
+
+3
+
+
+
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+void findMajorityElementAndMedian(int n, int arr[]) {
+    sort(arr, arr + n); // Sort the array in non-decreasing order
+
+    int majority_count = n / 2;
+    int majority_element = arr[majority_count];
+
+    // Check if the majority element exists
+    for (int i = 0; i <= n - majority_count; i++) {
+        if (arr[i] == majority_element) {
+            majority_count--;
+            if (majority_count == 0)
+                break;
+        }
+    }
+
+    // Print whether the majority element exists or not
+    if (majority_count > 0)
+        cout << "yes" << endl;
+    else
+        cout << "no" << endl;
+
+    // Calculate and print the median
+    if (n % 2 == 1)
+        cout << "Median: " << arr[n / 2] << endl;
+    else
+        cout << "Median: " << (arr[n / 2 - 1] + arr[n / 2]) / 2.0 << endl;
+}
+
+int main() {
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter the elements of the array: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    findMajorityElementAndMedian(n, arr);
+
+    return 0;
+}
+
