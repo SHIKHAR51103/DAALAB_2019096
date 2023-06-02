@@ -1,0 +1,167 @@
+
+
+
+1
+
+
+
+#include <iostream>
+#include <climits>
+
+using namespace std;
+
+int matrixChainMultiplication(int dimensions[], int n) {
+    int dp[n][n]; // 2D array to store minimum number of operations
+
+    // Initialize diagonal elements to 0
+    for (int i = 1; i < n; i++) {
+        dp[i][i] = 0;
+    }
+
+    // Calculate minimum number of operations for each chain length
+    for (int l = 2; l < n; l++) {
+        for (int i = 1; i < n - l + 1; i++) {
+            int j = i + l - 1;
+            dp[i][j] = INT_MAX;
+
+            // Calculate minimum cost for each split point
+            for (int k = i; k < j; k++) {
+                int cost = dp[i][k] + dp[k + 1][j] + dimensions[i - 1] * dimensions[k] * dimensions[j];
+                if (cost < dp[i][j])
+                    dp[i][j] = cost;
+            }
+        }
+    }
+
+    return dp[1][n - 1]; // Return the minimum number of operations
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of matrices: ";
+    cin >> n;
+
+    int dimensions[n + 1];
+    cout << "Enter the dimensions of matrices: ";
+    for (int i = 0; i <= n; i++) {
+        cin >> dimensions[i];
+    }
+
+    int minOperations = matrixChainMultiplication(dimensions, n + 1);
+    cout << "Minimum number of operations: " << minOperations << endl;
+
+    return 0;
+}
+
+
+
+
+
+2
+
+
+
+
+
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int coinChange(int coins[], int n, int N) {
+    vector<int> dp(N + 1, 0);
+    dp[0] = 1;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = coins[i]; j <= N; j++) {
+            dp[j] += dp[j - coins[i]];
+        }
+    }
+
+    return dp[N];
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of coins: ";
+    cin >> n;
+
+    int coins[n];
+    cout << "Enter the values of coins: ";
+    for (int i = 0; i < n; i++) {
+        cin >> coins[i];
+    }
+
+    int N;
+    cout << "Enter the value of N: ";
+    cin >> N;
+
+    int ways = coinChange(coins, n, N);
+    cout << "Number of ways to make sum " << N << ": " << ways << endl;
+
+    return 0;
+}
+
+
+
+
+3
+
+
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+bool partitionSet(int set[], int currentIndex, int subsetSum1, int subsetSum2, int subsetSize1, int subsetSize2) {
+    int n = subsetSize1 + subsetSize2;
+
+    if (subsetSum1 == subsetSum2 && n == currentIndex) {
+        return true;
+    }
+
+    if (currentIndex == n) {
+        return false;
+    }
+
+    return partitionSet(set, currentIndex + 1, subsetSum1 + set[currentIndex], subsetSum2, subsetSize1 + 1, subsetSize2)
+        || partitionSet(set, currentIndex + 1, subsetSum1, subsetSum2 + set[currentIndex], subsetSize1, subsetSize2 + 1)
+        || partitionSet(set, currentIndex + 1, subsetSum1, subsetSum2, subsetSize1, subsetSize2);
+}
+
+bool canPartition(int set[], int n) {
+    int totalSum = 0;
+    for (int i = 0; i < n; i++) {
+        totalSum += set[i];
+    }
+
+    if (totalSum % 2 != 0) {
+        return false;
+    }
+
+    return partitionSet(set, 0, 0, 0, 0, 0);
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of elements: ";
+    cin >> n;
+
+    int set[n];
+    cout << "Enter the elements of the set: ";
+    for (int i = 0; i < n; i++) {
+        cin >> set[i];
+    }
+
+    if (canPartition(set, n)) {
+        cout << "yes" << endl;
+    } else {
+        cout << "no" << endl;
+    }
+
+    return 0;
+}
