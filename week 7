@@ -183,75 +183,59 @@ int main() {
 
 using namespace std;
 
-const int INF = INT_MAX;
-
-// Function to find the weight of the shortest path with exactly k edges
 int shortestPathWithKEdges(vector<vector<int>>& graph, int source, int destination, int k) {
-    int numVertices = graph.size();
-    vector<vector<vector<int>>> dp(numVertices, vector<vector<int>>(numVertices, vector<int>(k + 1, INF)));
+    int V = graph.size();
+    vector<vector<int>> dp(V, vector<int>(k + 1, INT_MAX));
 
-    // Initialize dp with base cases
-    for (int v = 0; v < numVertices; v++) {
-        dp[v][v][0] = 0;  // Distance from v to v with 0 edges is 0
-    }
+    dp[source][0] = 0;
 
-    // Set the weights of direct edges
-    for (int u = 0; u < numVertices; u++) {
-        for (int v = 0; v < numVertices; v++) {
-            if (graph[u][v] != 0) {
-                dp[u][v][1] = graph[u][v];
-            }
-        }
-    }
-
-    // Calculate shortest path weights for each edge count
-    for (int i = 2; i <= k; i++) {
-        for (int u = 0; u < numVertices; u++) {
-            for (int v = 0; v < numVertices; v++) {
-                for (int w = 0; w < numVertices; w++) {
-                    dp[u][v][i] = min(dp[u][v][i], dp[u][w][i - 1] + dp[w][v][1]);
+    for (int edge = 1; edge <= k; edge++) {
+        for (int u = 0; u < V; u++) {
+            for (int v = 0; v < V; v++) {
+                if (graph[u][v] != INT_MAX && dp[u][edge - 1] != INT_MAX) {
+                    dp[v][edge] = min(dp[v][edge], dp[u][edge - 1] + graph[u][v]);
                 }
             }
         }
     }
 
-    // Check if a path of length k exists from source to destination
-    if (dp[source][destination][k] == INF) {
-        cout << "No path of length " << k << " is available" << endl;
+    if (dp[destination][k] != INT_MAX) {
+        return dp[destination][k];
+    } else {
         return -1;
     }
-
-    // Return the weight of the shortest path with exactly k edges
-    return dp[source][destination][k];
 }
 
 int main() {
-    int numVertices;
-    cout << "Enter the number of vertices: ";
-    cin >> numVertices;
+    int V;
+    cout << "Enter the number of vertices in the graph: ";
+    cin >> V;
 
-    // Create an adjacency matrix to represent the graph
-    vector<vector<int>> graph(numVertices, vector<int>(numVertices, 0));
+    vector<vector<int>> graph(V, vector<int>(V));
 
-    cout << "Enter the adjacency matrix: " << endl;
-    for (int i = 0; i < numVertices; i++) {
-        for (int j = 0; j < numVertices; j++) {
+    cout << "Enter the adjacency matrix for the graph:" << endl;
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
             cin >> graph[i][j];
         }
     }
 
     int source, destination, k;
-    cout << "Enter the source vertex number: ";
+    cout << "Enter the source vertex: ";
     cin >> source;
-    cout << "Enter the destination vertex number: ";
+
+    cout << "Enter the destination vertex: ";
     cin >> destination;
+
     cout << "Enter the value of k: ";
     cin >> k;
 
-    int shortestPathWeight = shortestPathWithKEdges(graph, source, destination, k);
+    int shortestPathWeight = shortestPathWithKEdges(graph, source - 1, destination - 1, k);
 
     if (shortestPathWeight != -1) {
-        cout << "Weight of the shortest path from source to destination with exactly " << k << " edges: " << shortestPathWeight << endl;
+        cout << "Weight of shortest path from (" << source << "," << destination << ") with " << k << " edges: " << shortestPathWeight << endl;
+    } else {
+        cout << "No path of length " << k << " is available." << endl;
     }
 
     return 0;
